@@ -15,6 +15,9 @@ interface PerroDao {
     @Query("SELECT * FROM perros")
     fun obtenerPerros(): Flow<List<Perro>>
 
+    @Query("SELECT * FROM perros WHERE id = :idBuscado")
+    suspend fun obtenerPerroPorId(idBuscado: Int): Perro?
+
     @Query("DELETE FROM perros")
     suspend fun borrarTodos()
 }
