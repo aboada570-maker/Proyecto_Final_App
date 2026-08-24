@@ -1,5 +1,6 @@
 package com.example.dogostore
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,11 +17,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PantallaCatalogo(viewModel: PerroViewModel) {
+fun PantallaCatalogo(navController: NavController, viewModel: PerroViewModel) {
 
     // Observamos la lista de perros desde el ViewModel
     val listaPerros by viewModel.perros.collectAsState()
@@ -79,7 +81,7 @@ fun PantallaCatalogo(viewModel: PerroViewModel) {
             ) {
                 item { Spacer(modifier = Modifier.height(8.dp)) } // Espacio inicial
                 items(listaPerros) { perro ->
-                    ItemPerro(perro = perro)
+                    ItemPerro(perro = perro, navController = navController)
                 }
             }
         }
@@ -87,11 +89,12 @@ fun PantallaCatalogo(viewModel: PerroViewModel) {
 }
 
 @Composable
-fun ItemPerro(perro: Perro) {
+fun ItemPerro(perro: Perro, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(160.dp),
+            .height(160.dp)
+            .clickable { navController.navigate("detalles/${perro.id}") },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(12.dp)
     ) {

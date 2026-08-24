@@ -22,6 +22,10 @@ class PerroViewModel(private val repository: PerroRepository) : ViewModel() {
             repository.insertarPerroLocal(perro)
         }
     }
+
+    suspend fun obtenerPerroPorId(id: Int): Perro? {
+        return repository.obtenerPerroLocalPorId(id)
+    }
 }
 
 class PerroViewModelFactory(private val repository: PerroRepository) : ViewModelProvider.Factory {

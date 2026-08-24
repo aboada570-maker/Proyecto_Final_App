@@ -15,4 +15,8 @@ class PerroRepository(
     suspend fun insertarPerroLocal(perro: Perro) {
         perroDao.insertarPerro(perro)
     }
+
+    suspend fun obtenerPerroLocalPorId(id: Int): Perro? {
+        return perroDao.obtenerPerroPorId(id)
+    }
 }
