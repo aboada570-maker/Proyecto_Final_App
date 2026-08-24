@@ -7,13 +7,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -90,7 +93,11 @@ fun PantallaCatalogo(navController: NavController, viewModel: PerroViewModel) {
             ) {
                 item { Spacer(modifier = Modifier.height(8.dp)) } // Espacio inicial
                 items(listaPerros) { perro ->
-                    ItemPerro(perro = perro, navController = navController)
+                    ItemPerro(
+                        perro = perro,
+                        navController = navController,
+                        onEliminar = { viewModel.eliminarPerro(perro.id) }
+                    )
                 }
             }
         }
@@ -98,7 +105,11 @@ fun PantallaCatalogo(navController: NavController, viewModel: PerroViewModel) {
 }
 
 @Composable
-fun ItemPerro(perro: Perro, navController: NavController) {
+fun ItemPerro(perro: Perro, navController: NavController, onEliminar: () -> Unit) {
+
+    // Estado para controlar si mostramos el diálogo de confirmación de borrado
+    var mostrarDialogoEliminar by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,40 +118,76 @@ fun ItemPerro(perro: Perro, navController: NavController) {
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Row(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
-                model = perro.urlImagen,
-                contentDescription = "Foto de ${perro.nombre}",
-                modifier = Modifier
-                    .width(110.dp)
-                    .fillMaxHeight(),
-                contentScale = ContentScale.Crop,
-                onError = { state ->
-                    android.util.Log.e("DogoStore", "Error cargando catálogo: ${state.result.throwable.message}")
-                }
-            )
+        Box(modifier = Modifier.fillMaxSize()) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                AsyncImage(
+                    model = perro.urlImagen,
+                    contentDescription = "Foto de ${perro.nombre}",
+                    modifier = Modifier
+                        .width(110.dp)
+                        .fillMaxHeight(),
+                    contentScale = ContentScale.Crop,
+                    onError = { state ->
+                        android.util.Log.e("DogoStore", "Error cargando catálogo: ${state.result.throwable.message}")
+                    }
+                )
 
-            Column(
-                modifier = Modifier.fillMaxSize().padding(12.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = perro.nombre, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = perro.raza, style = MaterialTheme.typography.bodyMedium)
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(16.dp)
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(12.dp),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "⚡ ${perro.energia}/5",
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Text(text = perro.nombre, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = perro.raza, style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text(
+                            text = "⚡ ${perro.energia}/5",
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
+
+            // Botón para eliminar, flotando en la esquina superior derecha de la tarjeta
+            IconButton(
+                onClick = { mostrarDialogoEliminar = true },
+                modifier = Modifier.align(Alignment.TopEnd)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Eliminar a ${perro.nombre}",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
+    }
+
+    // Diálogo de confirmación para no borrar un perro por accidente
+    if (mostrarDialogoEliminar) {
+        AlertDialog(
+            onDismissRequest = { mostrarDialogoEliminar = false },
+            title = { Text("Eliminar perro") },
+            text = { Text("¿Seguro que quieres eliminar a ${perro.nombre} del catálogo?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onEliminar()
+                    mostrarDialogoEliminar = false
+                }) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { mostrarDialogoEliminar = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }

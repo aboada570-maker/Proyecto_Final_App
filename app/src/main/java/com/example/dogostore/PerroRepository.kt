@@ -21,6 +21,10 @@ class PerroRepository(
         return perroDao.obtenerPerroPorId(id)
     }
 
+    suspend fun eliminarPerroLocal(id: Int) {
+        perroDao.eliminarPerroPorId(id)
+    }
+
     // --- 2. OPERACIONES DE RED (RETROFIT) ---
 
     suspend fun obtenerRazasDelMundo(): List<RazaRed> {

@@ -28,6 +28,12 @@ class PerroViewModel(private val repository: PerroRepository) : ViewModel() {
         return repository.obtenerPerroLocalPorId(id)
     }
 
+    fun eliminarPerro(id: Int){
+        viewModelScope.launch {
+            repository.eliminarPerroLocal(id)
+        }
+    }
+
     // Estado para almacenar las razas descargadas de la API
     private val _razasInternet = MutableStateFlow<List<RazaRed>>(emptyList())
     val razasInternet: StateFlow<List<RazaRed>> = _razasInternet
