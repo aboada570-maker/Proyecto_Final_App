@@ -47,7 +47,9 @@ fun DogoStoreApp() {
     val database = PerroDatabase.getDatabase(context)
     val dao = database.perroDao()
 
-    val repositorio = remember { PerroRepository(dao) }
+    val api = RetrofitClient.api
+
+    val repositorio = remember { PerroRepository(dao, api) }
 
     //Creamos el viewModel usando nuestro factory personalizado para pasarle el DAO
     val perroViewModel: PerroViewModel = viewModel(factory = PerroViewModelFactory(repositorio))
@@ -60,12 +62,27 @@ fun DogoStoreApp() {
             PantallaCatalogo(navController = navController, viewModel = perroViewModel)
         }
 
-        // --- RUTA 2: Ajustes de Usuario ---
+        //RUTA 2: RAZAS DEL MUNDO
+        composable("razas") {
+            PantallaRazas(navController = navController, viewModel = perroViewModel)
+        }
+
+        // RUTA 2b: Detalle de una raza (Espera un parámetro llamado {id}, es un UUID de texto)
+        composable("detalleRaza/{id}") { backStackEntry ->
+            val idRaza = backStackEntry.arguments?.getString("id") ?: ""
+            PantallaDetalleRaza(
+                navController = navController,
+                viewModel = perroViewModel,
+                razaId = idRaza
+            )
+        }
+
+        // --- RUTA 3: Ajustes de Usuario ---
         composable("ajustes") {
             PantallaAjustes(navController = navController)
         }
 
-        // --- RUTA 3: Los Detalles (Espera un parámetro llamado {id}) ---
+        // --- RUTA 4: Los Detalles (Espera un parámetro llamado {id}) ---
         composable("detalles/{id}") { backStackEntry ->
             // Recuperamos el parámetro de la ruta (siempre llega como texto/String)
             val idString = backStackEntry.arguments?.getString("id")
