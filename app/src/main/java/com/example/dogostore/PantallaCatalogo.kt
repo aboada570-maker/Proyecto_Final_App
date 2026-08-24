@@ -59,21 +59,10 @@ fun PantallaCatalogo(navController: NavController, viewModel: PerroViewModel) {
             )
         },
 
-        //Agregar un boton para insertar datos
+        //Agregar un boton para ir al formulario de registro
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    //Insertar un perro de ejemplo
-                    val nuevoPerro = Perro(
-                        nombre = "Hachiko",
-                        raza = "Akita",
-                        edad = 5,
-                        descripcion = "El Akita es una raza grande y musculosa originaria de Japón. Son conocidos por su lealtad y valentía.",
-                        energia = 3.0,
-                        urlImagen = "https://images.dogapi.dog/pnw8dtsqigv6u4k29h7v5q7bfnue"
-                    )
-                    viewModel.insertarPerro(nuevoPerro)
-                }
+                onClick = { navController.navigate("agregar") }
             )
             {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Agregar Perro")
