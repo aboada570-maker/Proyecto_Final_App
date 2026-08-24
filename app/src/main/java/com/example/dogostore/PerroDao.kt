@@ -18,6 +18,9 @@ interface PerroDao {
     @Query("SELECT * FROM perros WHERE id = :idBuscado")
     suspend fun obtenerPerroPorId(idBuscado: Int): Perro?
 
+    @Query("DELETE FROM perros WHERE id = :idBuscado")
+    suspend fun eliminarPerroPorId(idBuscado: Int)
+
     @Query("DELETE FROM perros")
     suspend fun borrarTodos()
 }
