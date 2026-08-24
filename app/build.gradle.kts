@@ -70,4 +70,8 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.datastore.preferences)
+
+    // Retrofit para conexión a APIs REST
+    implementation(libs.squareup.retrofit)
+    implementation(libs.squareup.converter.gson)
 }
