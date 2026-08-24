@@ -7,13 +7,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,15 +30,27 @@ fun PantallaCatalogo(navController: NavController, viewModel: PerroViewModel) {
     // Observamos la lista de perros desde el ViewModel
     val listaPerros by viewModel.perros.collectAsState()
 
+    // Obtenemos el contexto actual para poder usarlo en AjustesUsuario
+    val context = LocalContext.current
+    // Obtenemos el nombre de usuario desde AjustesUsuario
+    val ajustesUsuario = remember { AjustesUsuario(context) }
+    // Observamos el flujo de nombre de usuario y lo convertimos en un estado para que Compose lo observe
+    val nombreUsuario by ajustesUsuario.nombreUsuarioFlow.collectAsState(initial = "Cargando...")
+
     // SCAFFOLD nos da una estructura profesional con Barra Superior
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("DogoStore", fontWeight = FontWeight.Bold) },
+                title = { Text("Hola $nombreUsuario", fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                ),
+                actions = {
+                    IconButton(onClick = { navController.navigate("ajustes") }) {
+                        Icon(Icons.Default.Settings, contentDescription = "Ajustes")
+                    }
+                }
             )
         },
 

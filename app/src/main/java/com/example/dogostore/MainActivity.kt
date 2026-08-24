@@ -60,7 +60,12 @@ fun DogoStoreApp() {
             PantallaCatalogo(navController = navController, viewModel = perroViewModel)
         }
 
-        // --- RUTA 2: Los Detalles (Espera un parámetro llamado {id}) ---
+        // --- RUTA 2: Ajustes de Usuario ---
+        composable("ajustes") {
+            PantallaAjustes(navController = navController)
+        }
+
+        // --- RUTA 3: Los Detalles (Espera un parámetro llamado {id}) ---
         composable("detalles/{id}") { backStackEntry ->
             // Recuperamos el parámetro de la ruta (siempre llega como texto/String)
             val idString = backStackEntry.arguments?.getString("id")
