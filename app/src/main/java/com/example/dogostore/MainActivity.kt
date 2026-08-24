@@ -62,6 +62,11 @@ fun DogoStoreApp() {
             PantallaCatalogo(navController = navController, viewModel = perroViewModel)
         }
 
+        // RUTA 1b: Formulario para agregar un perro nuevo
+        composable("agregar") {
+            PantallaAgregarPerro(navController = navController, viewModel = perroViewModel)
+        }
+
         //RUTA 2: RAZAS DEL MUNDO
         composable("razas") {
             PantallaRazas(navController = navController, viewModel = perroViewModel)
